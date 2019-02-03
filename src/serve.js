@@ -19,7 +19,7 @@ async function server(input) {
     if (intervals && intervals.length > 0) {
         intervals.forEach((interval) => {
             if (!Object.values(INTERVALS).includes(interval)) {
-                throw new Error(`Interval has to be an array of ${Object.values(INTERVALS)}`);
+                throw new Error(`Interval has to be an array of ${Object.values(INTERVALS).join(', ')}. Got ${interval.join(', ')}`);
             }
         });
 

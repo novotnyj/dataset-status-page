@@ -38,7 +38,7 @@ function intervalToMoments(interval) {
         };
     }
 
-    throw new Error(`Interval has to be one of ${Object.values(INTERVALS).join(', ')}`);
+    throw new Error(`Interval has to be one of ${Object.values(INTERVALS).join(', ')}. Got "${interval}".`);
 }
 
 function getRandomInt(min, max) {
