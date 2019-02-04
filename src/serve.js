@@ -47,6 +47,7 @@ async function server(input) {
         if (!interval) {
             interval = defaultInterval;
         }
+
         const intervalObj = intervalToMoments(interval);
         getData(intervalObj).then((data) => {
             res.json(data);

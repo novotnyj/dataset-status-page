@@ -348,7 +348,7 @@
             const data = await response.json();
             const intervals = data.intervals.map((item) => item.value);
 
-            if (window._statusPage.interval && !intervals.includes(window._statusPage.interval)) {
+            if (!window._statusPage.interval || !intervals.includes(window._statusPage.interval)) {
                 window._statusPage.interval = data.default;
             }
 
