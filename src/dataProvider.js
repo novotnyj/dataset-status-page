@@ -28,6 +28,7 @@ function groupDays(data) {
             result[createdAt].cleanItemCount += item.cleanItemCount;
         } else {
             result[createdAt] = { ...item };
+            result[createdAt] = moment(item.createdAt).hour(12).minute(0).toISOString();
         }
     });
 
