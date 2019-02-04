@@ -45,6 +45,12 @@ async function getActorData(store, actorName, interval) {
 
     if (!data || data.length === 0) {
         data = await store.getValue(actorName);
+        data = data.sort((a, b) => {
+            const d1 = moment(a.createdAt);
+            const d2 = moment(b.createdAt);
+            if (d1.isSame(d2)) return 0;
+            return d1.isBefore(d2) ? -1 : 1;
+        });
         cache[actorName] = { cachedAt: Date.now(), data };
     }
 
