@@ -4,7 +4,7 @@
 	"description": "This is a boilerplate of an Apify actor.",
 	"main": "./src/main.js",
 	"dependencies": {
-		"apify": "^0.11.5",
+		"apify": "^0.11.8",
 		"express": "^4.16.4",
 		"material-colors": "^1.2.6",
 		"moment": "^2.24.0"
@@ -19,9 +19,9 @@
 		"url": ""
 	},
 	"author": {
-        "name": "Jan Novotny",
-        "email": "jan.novotny@apify.com"
-    },
+		"name": "Jan Novotny",
+		"email": "jan.novotny@apify.com"
+	},
 	"license": "ISC",
 	"homepage": ""
 }

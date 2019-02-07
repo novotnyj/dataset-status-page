@@ -82,36 +82,15 @@ async function getColors() {
     return store.getValue(COLORS_KEY);
 }
 
-async function forEachKey(storeId, iteratee, options = {}, index = 0) {
-    const { exclusiveStartKey } = options;
-
-    const response = await Apify.client.keyValueStores.listKeys({
-        storeId,
-        exclusiveStartKey,
-    });
-    const { nextExclusiveStartKey, isTruncated, items } = response;
-
-    for (const key of items) {
-        await iteratee(key, index++);
-    }
-
-    return isTruncated ? forEachKey(storeId, iteratee, {
-        exclusiveStartKey: nextExclusiveStartKey,
-    }, index) : undefined; // [].forEach() returns undefined.
-}
-
 async function getStoreKeys(store) {
     const result = [];
-    if (!Apify.isAtHome()) {
-        await store.forEachKey(async (key) => {
+
+    await store.forEachKey(async (key) => {
+        if (typeof key === 'string' || key instanceof String) {
             result.push(key);
-        });
-
-        return result.filter((key) => key !== COLORS_KEY);
-    }
-
-    await forEachKey(store.storeId, async (key) => {
-        result.push(key.key);
+        } else {
+            result.push(key.key);
+        }
     });
 
     return result.filter((key) => key !== COLORS_KEY);
