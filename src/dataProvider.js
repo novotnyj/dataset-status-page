@@ -102,8 +102,8 @@ async function getData(interval) {
 
     const promises = [];
     let result = [];
-    for (const key of keys) {
-        promises.push(getActorData(store, key, interval));
+    for (const actorName of keys) {
+        promises.push(getActorData(store, actorName, interval));
         if (promises.length > 10) {
             const results = await Promise.all(promises);
             result = result.concat(...results);

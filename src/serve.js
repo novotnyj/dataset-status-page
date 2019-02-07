@@ -31,12 +31,10 @@ async function server(input) {
         colors = await getColors();
     }, 10 * 60 * 1000);
 
-    const promises = [];
     for (const interval of Object.values(INTERVALS)) {
         const intervalObj = intervalToMoments(interval);
-        promises.push(getData(intervalObj));
+        await getData(intervalObj);
     }
-    await Promise.all(promises);
 
     app.get('/', (req, res) => {
         res.sendFile(`${rootDir}/resources/index.html`);
