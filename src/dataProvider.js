@@ -40,13 +40,13 @@ async function getActorData(store, actorName, interval) {
 
     let data;
     if (cache[actorName] && cache[actorName] !== null) {
-        console.log(`Loading ${interval} data for ${actorName} from cache`);
+        console.log(`Loading ${interval.name} data for ${actorName} from cache`);
         // eslint-disable-next-line prefer-destructuring
         data = cache[actorName].data;
     }
 
     if (!data || data.length === 0) {
-        console.log(`Loading ${interval} data for ${actorName} from store`);
+        console.log(`Loading ${interval.name} data for ${actorName} from store`);
         data = await store.getValue(actorName);
         data = data.sort((a, b) => {
             const d1 = moment(a.createdAt);
@@ -103,12 +103,13 @@ async function getData(interval) {
     const keys = await getStoreKeys(store);
     console.log(`Getting ${interval.name} data for ${keys.join(', ')}`);
 
-    const promises = [];
+    let promises = [];
     let result = [];
     for (const actorName of keys) {
         promises.push(getActorData(store, actorName, interval));
         if (promises.length > 10) {
             const results = await Promise.all(promises);
+            promises = [];
             result = result.concat(...results);
         }
     }
