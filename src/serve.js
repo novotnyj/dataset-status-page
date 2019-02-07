@@ -1,5 +1,6 @@
 const Apify = require('apify');
 const express = require('express');
+const exphbs = require('express-handlebars');
 const { INTERVALS, INTERVALS_WITH_LABELS } = require('./consts');
 const { intervalToMoments } = require('./utils');
 const { getData, getColors } = require('./dataProvider');
@@ -8,6 +9,12 @@ const { APIFY_CONTAINER_PORT, APIFY_CONTAINER_URL } = process.env;
 
 async function server(input) {
     const app = express();
+
+    app.engine('handlebars', exphbs({
+        defaultLayout: 'main',
+    }));
+    app.set('view engine', 'handlebars');
+
     const port = APIFY_CONTAINER_PORT || 3030;
     const url = APIFY_CONTAINER_URL || 'localhost';
     let defaultInterval = input.defaultInterval || INTERVALS.DAY;
@@ -37,7 +44,13 @@ async function server(input) {
     }
 
     app.get('/', (req, res) => {
-        res.sendFile(`${rootDir}/resources/index.html`);
+        res.render('home', {
+            showDonut: input.showDonut || true,
+        });
+    });
+
+    app.get('/main.js', (req, res) => {
+        res.sendFile(`${rootDir}/resources/main.js`);
     });
 
     app.get('/dataset-info.json', (req, res) => {

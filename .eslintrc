@@ -13,7 +13,8 @@
     "globals": {
         "Npm": true,
         "document": true,
-        "fetch": true
+        "fetch": true,
+        "window": true
     },
     "env": {
         "es6": true
