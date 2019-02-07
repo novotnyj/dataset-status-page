@@ -40,13 +40,11 @@ async function getActorData(store, actorName, interval) {
 
     let data;
     if (cache[actorName] && cache[actorName] !== null) {
-        console.log(`Loading ${interval.name} data for ${actorName} from cache`);
         // eslint-disable-next-line prefer-destructuring
         data = cache[actorName].data;
     }
 
     if (!data || data.length === 0) {
-        console.log(`Loading ${interval.name} data for ${actorName} from store`);
         data = await store.getValue(actorName);
         data = data.sort((a, b) => {
             const d1 = moment(a.createdAt);
@@ -101,7 +99,6 @@ async function getStoreKeys(store) {
 async function getData(interval) {
     const store = await Apify.openKeyValueStore(STORAGE_NAME);
     const keys = await getStoreKeys(store);
-    console.log(`Getting ${interval.name} data for ${keys.join(', ')}`);
 
     let promises = [];
     let result = [];
