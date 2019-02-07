@@ -45,7 +45,7 @@ async function server(input) {
 
     app.get('/', (req, res) => {
         res.render('home', {
-            showDonut: input.showDonut || true,
+            showDonut: input.showDonut !== undefined ? input.showDonut : true,
         });
     });
 
