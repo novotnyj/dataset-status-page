@@ -99,6 +99,7 @@ async function getStoreKeys(store) {
 async function getData(interval) {
     const store = await Apify.openKeyValueStore(STORAGE_NAME);
     const keys = await getStoreKeys(store);
+    console.log(`Getting data for ${keys.join(', ')}`);
 
     const promises = [];
     let result = [];
