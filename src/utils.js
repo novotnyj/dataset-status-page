@@ -9,31 +9,33 @@ function intervalToMoments(interval) {
             end: moment(),
         };
     }
+
+    const midnight = moment().hour(0).minute(0);
     if (interval === INTERVALS.WEEK) {
         return {
             name: interval,
-            start: moment().subtract(7, 'day'),
+            start: midnight.subtract(7, 'day'),
             end: moment(),
         };
     }
     if (interval === INTERVALS.TWO_WEEKS) {
         return {
             name: interval,
-            start: moment().subtract(14, 'day'),
+            start: midnight.subtract(14, 'day'),
             end: moment(),
         };
     }
     if (interval === INTERVALS.MONTH) {
         return {
             name: interval,
-            start: moment().subtract(30, 'day'),
+            start: midnight.subtract(30, 'day'),
             end: moment(),
         };
     }
     if (interval === INTERVALS.TWO_MONTHS) {
         return {
             name: interval,
-            start: moment().subtract(60, 'day'),
+            start: midnight.subtract(60, 'day'),
             end: moment(),
         };
     }
