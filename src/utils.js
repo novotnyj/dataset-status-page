@@ -10,7 +10,7 @@ function intervalToMoments(interval) {
         };
     }
 
-    const midnight = moment().hour(0).minute(0);
+    const midnight = moment().hour(0).minute(0).second(1);
     if (interval === INTERVALS.WEEK) {
         return {
             name: interval,
