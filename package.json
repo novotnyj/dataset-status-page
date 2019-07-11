@@ -6,7 +6,7 @@
 	"dependencies": {
 		"apify": "^0.14.0",
 		"express": "^4.16.4",
-		"express-handlebars": "^3.0.0",
+		"express-handlebars": "^3.1.0",
 		"material-colors": "^1.2.6",
 		"moment": "^2.24.0",
 		"request-promise": "^4.2.4"
