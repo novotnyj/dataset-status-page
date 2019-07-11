@@ -1,11 +1,44 @@
 const Apify = require('apify');
 const express = require('express');
 const exphbs = require('express-handlebars');
+const rp = require('request-promise');
 const { INTERVALS, INTERVALS_WITH_LABELS } = require('./consts');
 const { intervalToMoments } = require('./utils');
 const { getData, getColors } = require('./dataProvider');
 
 const { APIFY_CONTAINER_PORT, APIFY_CONTAINER_URL } = process.env;
+const { log } = Apify;
+
+async function updateRebrandly(input) {
+    if (!input.rebrandly) return;
+
+    const { id, apiKey, workspace, title } = input.rebrandly;
+    if (!id || !apiKey || !workspace || !title) {
+        return;
+    }
+
+    const data = {
+        id,
+        title,
+        destination: `${APIFY_CONTAINER_URL}`,
+    };
+
+    const requestHeaders = {
+        'Content-Type': 'application/json',
+        apikey: apiKey,
+        workspace,
+    };
+
+    log.info('Updating rebrand.ly', { data });
+    await rp({
+        uri: `https://api.rebrandly.com/v1/links/${id}`,
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: requestHeaders,
+    });
+
+    log.info('rebrand.ly updated');
+}
 
 async function server(input) {
     const app = express();
@@ -77,6 +110,8 @@ async function server(input) {
     });
 
     const appUrl = Apify.isAtHome() ? `Listenig on ${url}!` : `Listenig on ${url}:${port}!`;
+
+    await updateRebrandly(input);
 
     return new Promise((resolve, reject) => {
         try {

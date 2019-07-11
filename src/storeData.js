@@ -26,6 +26,10 @@ function dropOldItems(data) {
     });
 }
 
+function normalizeName(name) {
+    return name.replace(/[\s{}"?><;=+]/g, '-');
+}
+
 async function storeData() {
     const input = await Apify.getValue('INPUT');
     console.log(`Opening ${STORAGE_NAME}`);
@@ -38,6 +42,7 @@ async function storeData() {
         colors = {};
     }
 
+    const normalizedName = normalizeName(name);
     if (!colors[name]) {
         colors[name] = generateActorColor(colors);
         await store.setValue(COLORS_KEY, colors);
@@ -58,7 +63,7 @@ async function storeData() {
         createdAt: info.createdAt,
     };
 
-    let currentValue = await store.getValue(name);
+    let currentValue = await store.getValue(normalizedName);
     if (!currentValue) {
         currentValue = [dataItem];
     } else {
@@ -68,7 +73,7 @@ async function storeData() {
 
     currentValue = dropOldItems(currentValue);
 
-    await store.setValue(name, currentValue);
+    await store.setValue(normalizedName, currentValue);
 }
 
 module.exports = { storeData };
