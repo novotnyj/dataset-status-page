@@ -62,7 +62,7 @@ const runDataToDataset = (values, chartId) => {
         const actorValues = values.filter((item) => item.actorName === actorName);
         datasets[actorName] = {
             data: actorValues.map(((item) => ({ x: Date.parse(item.createdAt), y: item.cleanItemCount }))),
-            label: actorName.startsWith('wwww') ? actorName : actorName.charAt(0).toUpperCase() + actorName.slice(1),
+            label: actorName.startsWith('www') ? actorName : actorName.charAt(0).toUpperCase() + actorName.slice(1),
             fill: false,
             borderColor: window.getActorColor(actorName, chartId),
             spanGaps: true,
