@@ -7,12 +7,7 @@ async function saveChart(chartName) {
     let charts = await chartsStore.getValue('charts');
     const chartId = getChartId(chartName);
     if (!charts) {
-        charts = {
-            default: {
-                id: 'default',
-                name: 'Count of dataset items in time',
-            },
-        };
+        charts = {};
     }
     if (chartName === 'default' || !chartName) {
         chartName = 'Count of dataset items in time';

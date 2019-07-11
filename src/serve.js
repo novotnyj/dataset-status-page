@@ -68,10 +68,12 @@ async function server(input) {
     }
 
     const charts = Object.values(await getCharts());
-    for (const interval of Object.values(INTERVALS)) {
-        const intervalObj = intervalToMoments(interval);
-        for (const chart of Object.values(charts)) {
-            await getData(intervalObj, chart.id);
+    if (charts.length > 0) {
+        for (const interval of Object.values(INTERVALS)) {
+            const intervalObj = intervalToMoments(interval);
+            for (const chart of charts) {
+                await getData(intervalObj, chart.id);
+            }
         }
     }
 
