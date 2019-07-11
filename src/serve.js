@@ -7,7 +7,7 @@ const { intervalToMoments } = require('./utils');
 const { getData, getColors } = require('./dataProvider');
 
 const { APIFY_CONTAINER_PORT, APIFY_CONTAINER_URL } = process.env;
-const { log } = Apify;
+const { log } = Apify.utils;
 
 async function updateRebrandly(input) {
     if (!input.rebrandly) return;
