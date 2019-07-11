@@ -1,5 +1,7 @@
 /* eslint-disable no-underscore-dangle */
-window._statusPage = window._statusPage || {};
+window._statusPage = window._statusPage || { };
+window._statusPage.actorColors = window._statusPage.actorColors || {};
+window._statusPage.chartList = window._statusPage.chartList || null;
 
 const hash = window.location.hash.split('&').reduce((result, item) => {
     const [name, value] = item.split('=');
@@ -29,27 +31,25 @@ function intervalChanged(e) {
     setActiveClass(interval);
 }
 
-async function fetchColors() {
-    const response = await fetch('/actor-colors.json');
+async function fetchColors(chartId) {
+    const response = await fetch(`/actor-colors.json?chartId=${chartId}`);
     return response.json();
 }
 
-window.getActorColor = (actorName) => {
-    if (!window._statusPage.actorColors) {
-        fetchColors().then((colors) => {
-            window._statusPage.actorColors = colors;
+window.getActorColor = (actorName, chartId) => {
+    if (!window._statusPage.actorColors[chartId]) {
+        fetchColors(chartId).then((colors) => {
+            window._statusPage.actorColors[chartId] = colors;
         });
     }
-    if (window._statusPage.actorColors[actorName]) {
-        return window._statusPage.actorColors[actorName];
+    if (window._statusPage.actorColors[chartId] && window._statusPage.actorColors[chartId][actorName]) {
+        return window._statusPage.actorColors[chartId][actorName];
     }
 
     return '#34495e';
 };
 
-const runsCtx = document.querySelector('#items-in-time');
-
-const runDataToDataset = (values) => {
+const runDataToDataset = (values, chartId) => {
     const labels = [];
     values.forEach((item) => {
         labels.push(Date.parse(item.createdAt));
@@ -64,7 +64,7 @@ const runDataToDataset = (values) => {
             data: actorValues.map(((item) => ({ x: Date.parse(item.createdAt), y: item.cleanItemCount }))),
             label: actorName.charAt(0).toUpperCase() + actorName.slice(1),
             fill: false,
-            borderColor: window.getActorColor(actorName),
+            borderColor: window.getActorColor(actorName, chartId),
             spanGaps: true,
         };
     }
@@ -75,13 +75,14 @@ const runDataToDataset = (values) => {
     };
 };
 
-let chart;
+const charts = {};
 
-const createOrUpdateLines = (datasetData) => {
-    const data = runDataToDataset(datasetData);
+const createOrUpdateLines = (datasetData, chartId) => {
+    const data = runDataToDataset(datasetData, chartId);
     const { interval } = window._statusPage;
 
-    if (chart) {
+    if (charts[chartId]) {
+        const chart = charts[chartId];
         chart.data = data;
         chart.options.scales.xAxes[0].time.tooltipFormat = interval === 'day' ? 'MM.DD. HH:mm' : 'MM.DD.';
         chart.options.scales.xAxes[0].scaleLabel.labelString = interval === 'day' ? 'Time' : 'Date';
@@ -90,8 +91,9 @@ const createOrUpdateLines = (datasetData) => {
         return;
     }
 
+    const ctx = document.querySelector(`#${chartId}`);
     // eslint-disable-next-line
-    chart = new Chart(runsCtx, {
+    charts[chartId] = new Chart(ctx, {
         type: 'line',
         data,
         options: {
@@ -136,147 +138,6 @@ const createOrUpdateLines = (datasetData) => {
     });
 };
 
-const donutsContext = document.querySelector('#items-donut');
-const showDonuts = donutsContext !== null;
-
-const charts = {
-    cleanItemCount: {
-        ctx: donutsContext,
-        legendCtx: document.querySelector('.items-legend'),
-        total: document.querySelector('.items-total'),
-    },
-};
-
-const updateOrCreateChart = (data, chartName) => {
-    const actorNames = [];
-    data.forEach((item) => {
-        if (!actorNames.includes(item.actorName)) {
-            actorNames.push(item.actorName);
-        }
-    });
-    const colors = actorNames.map((name) => window.getActorColor(name));
-
-    const chartData = actorNames.map((name) => {
-        const values = data.filter((item) => item.actorName === name)
-            .reduce((prev, curr) => {
-                return prev + curr.cleanItemCount;
-            }, 0);
-        return values;
-    });
-
-    let total = 0;
-    data.forEach((item) => {
-        total += item[chartName];
-    });
-
-    charts[chartName].total.innerText = `(${total.toLocaleString()} total)`;
-
-    const legendClickCallback = (event) => {
-        event = event || window.event;
-
-        let target = event.target || event.srcElement;
-        while (target.nodeName !== 'LI') {
-            target = target.parentElement;
-        }
-
-        const { legendChart } = charts[chartName];
-        const index = parseInt(target.getAttribute('data-index'), 10);
-        const meta = legendChart.getDatasetMeta(0);
-        const item = meta.data[index];
-
-        if (item.hidden === null || item.hidden === false) {
-            item.hidden = true;
-            target.classList.add('crossed-text');
-        } else {
-            target.classList.remove('crossed-text');
-            item.hidden = null;
-        }
-        legendChart.update();
-    };
-
-    const setLegend = (chrt) => {
-        const container = charts[chartName].legendCtx;
-        container.innerHTML = chrt.generateLegend();
-
-        const items = Array.from(container.querySelectorAll('li'));
-        items.forEach((item) => {
-            item.addEventListener('click', legendClickCallback, false);
-        });
-    };
-
-    if (charts[chartName].chart) {
-        // Update chart
-        charts[chartName].chart.data = {
-            datasets: [{
-                data: chartData,
-                backgroundColor: colors,
-            }],
-            labels: actorNames.map((name) => name.charAt(0).toUpperCase() + name.slice(1)),
-        };
-        charts[chartName].chart.update(0);
-        setLegend(charts[chartName].chart);
-        return;
-    }
-
-    // eslint-disable-next-line
-    const donut = new Chart(charts[chartName].ctx, {
-        type: 'doughnut',
-        data: {
-            datasets: [{
-                data: chartData,
-                backgroundColor: colors,
-            }],
-            labels: actorNames.map((name) => name.charAt(0).toUpperCase() + name.slice(1)),
-        },
-        options: {
-            tooltips: {
-                callbacks: {
-                    label: (tooltipItem, dt) => {
-                        let label = dt.labels[tooltipItem.index] || '';
-                        if (label) {
-                            label += ': ';
-                        }
-
-                        label += dt.datasets[0].data[tooltipItem.index].toLocaleString();
-                        return label;
-                    },
-                },
-            },
-            legend: false,
-            legendCallback: (chrt) => {
-                const text = [];
-                const ds = chrt.data.datasets[0];
-                let dt = [];
-                for (let i = 0; i < ds.data.length; i++) {
-                    dt.push({
-                        name: chrt.data.labels[i],
-                        value: ds.data[i],
-                        index: i,
-                    });
-                }
-                function compare(a, b) {
-                    if (a.name < b.name) {
-                        return -1;
-                    }
-                    if (a.name > b.name) {
-                        return 1;
-                    }
-                    return 0;
-                }
-                dt = dt.sort(compare);
-                for (const item of dt) {
-                    text.push(`<li class="list-group-item d-flex justify-content-between align-items-center" data-index="${item.index}">`);
-                    text.push(`${item.name} <span class="badge badge-default badge-pill">${item.value.toLocaleString()}</span>`);
-                    text.push('</li>');
-                }
-                return text.join('');
-            },
-        },
-    });
-    charts[chartName].chart = donut;
-    setLegend(donut);
-};
-
 async function loadIntervals() {
     const response = await fetch('/intervals.json');
     const data = await response.json();
@@ -308,10 +169,10 @@ async function loadIntervals() {
     });
 }
 
-const updateData = async () => {
-    window._statusPage.actorColors = await fetchColors();
+const updateData = async (chartId) => {
+    window._statusPage.actorColors[chartId] = await fetchColors(chartId);
 
-    const url = `/dataset-info.json?interval=${window._statusPage.interval}`;
+    const url = `/dataset-info.json?interval=${window._statusPage.interval}&chartId=${chartId}`;
     const response = await fetch(url);
 
     const data = await response.json();
@@ -322,12 +183,14 @@ const updateData = async () => {
         alerts.forEach((el) => { el.style.display = 'none'; });
     }
 
-    createOrUpdateLines(data);
-    if (showDonuts) {
-        for (const chartName of Object.keys(charts)) {
-            updateOrCreateChart(data, chartName);
-        }
-    }
+    createOrUpdateLines(data, chartId);
+};
+
+const loadCharts = async () => {
+    const url = '/charts.json';
+    const response = await fetch(url);
+
+    window._statusPage.chartList = Object.values(await response.json());
 };
 
 window._statusPage.updateData = updateData;
@@ -335,8 +198,17 @@ window._statusPage.updateData = updateData;
 setInterval(updateData, 5 * 60 * 1000);
 
 function loadData() {
-    updateData().then(() => {
-        console.log('Data loaded');
+    if (!window._statusPage.chartList) {
+        loadCharts().then(() => {
+            loadData();
+        });
+        return;
+    }
+
+    window._statusPage.chartList.forEach((chart) => {
+        updateData(chart.id).then(() => {
+            console.log(`Data loaded for ${chart.name}`);
+        });
     });
 }
 

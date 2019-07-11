@@ -10,35 +10,18 @@
 </nav>
 
 <div class="container pt-4">
-    <div class="container">
+    {{#each charts}}
+    <div class="container {{this.id}}">
         <div class="row">
             <div class="col-12">
-                <h4>Count of dataset items in time</h4>
+                <h4>{{this.name}}</h4>
             </div>
             <div class="col-12 no-data-alert">
                 <div class="alert alert-secondary">No data yet...</div>
             </div>
-            <canvas id="items-in-time"></canvas>
+            <canvas id="{{this.id}}"></canvas>
         </div>
 
     </div>
-
-    {{#if showDonut}}
-    <div class="container pt-4 sum-counts">
-        <div class="row">
-            <div class="col-12">
-                <h4>Item counts <small class="items-total"></small></h4>
-            </div>
-            <div class="col-12 no-data-alert">
-                <div class="alert alert-secondary">No data yet...</div>
-            </div>
-            <div class="col-8">
-                <canvas id="items-donut" width="100%"></canvas>
-            </div>
-            <div class="col-4">
-                <ul class="items-legend list-group list-group-flush pt-2"></ul>
-            </div>
-        </div>
-    </div>
-    {{/if}}
+    {{/each}}
 </div>

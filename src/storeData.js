@@ -1,7 +1,9 @@
 const Apify = require('apify');
 const moment = require('moment');
-const { STORAGE_NAME, COLORS_KEY } = require('./consts');
+const { COLORS_KEY } = require('./consts');
 const { getRandomColor } = require('./colors');
+const { getChartStorageName } = require('./utils');
+const { saveChart } = require('./charts');
 
 const MAX_DAYS = 61;
 
@@ -32,9 +34,13 @@ function normalizeName(name) {
 
 async function storeData() {
     const input = await Apify.getValue('INPUT');
-    console.log(`Opening ${STORAGE_NAME}`);
-    const store = await Apify.openKeyValueStore(STORAGE_NAME);
-    const { name, datasetId } = input;
+    const { name, datasetId, chartName } = input;
+
+    const storageName = getChartStorageName(chartName || 'default');
+
+    console.log(`Opening ${storageName}`);
+    const store = await Apify.openKeyValueStore(storageName);
+    await saveChart(chartName);
 
     console.log('Getting color');
     let colors = await store.getValue(COLORS_KEY);
@@ -43,8 +49,8 @@ async function storeData() {
     }
 
     const normalizedName = normalizeName(name);
-    if (!colors[name]) {
-        colors[name] = generateActorColor(colors);
+    if (!colors[normalizedName]) {
+        colors[normalizedName] = generateActorColor(colors);
         await store.setValue(COLORS_KEY, colors);
     }
 
@@ -55,6 +61,7 @@ async function storeData() {
 
     const dataItem = {
         id: info.id,
+        chartName: chartName || 'default',
         actorName: name,
         itemCount: info.itemCount,
         actRunId: info.actRunId,

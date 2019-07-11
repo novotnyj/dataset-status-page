@@ -5,6 +5,7 @@ const rp = require('request-promise');
 const { INTERVALS, INTERVALS_WITH_LABELS } = require('./consts');
 const { intervalToMoments } = require('./utils');
 const { getData, getColors } = require('./dataProvider');
+const { getCharts } = require('./charts');
 
 const { APIFY_CONTAINER_PORT, APIFY_CONTAINER_URL } = process.env;
 const { log } = Apify.utils;
@@ -54,7 +55,6 @@ async function server(input) {
     let availableIntervals = INTERVALS_WITH_LABELS;
     const { intervals } = input;
     const rootDir = __dirname;
-    let colors = await getColors();
 
     if (intervals && intervals.length > 0) {
         intervals.forEach((interval) => {
@@ -67,18 +67,21 @@ async function server(input) {
         defaultInterval = availableIntervals[0].value;
     }
 
-    setInterval(async () => {
-        colors = await getColors();
-    }, 10 * 60 * 1000);
-
+    const charts = Object.values(await getCharts());
     for (const interval of Object.values(INTERVALS)) {
         const intervalObj = intervalToMoments(interval);
-        await getData(intervalObj);
+        for (const chart of Object.values(charts)) {
+            await getData(intervalObj, chart.id);
+        }
     }
 
     app.get('/', (req, res) => {
-        res.render('home', {
-            showDonut: input.showDonut !== undefined ? input.showDonut : true,
+        getCharts().then((data) => {
+            const sortedCharts = Object.values(data).sort((a, b) => a.id > b.id);
+            res.render('home', {
+                showDonut: input.showDonut !== undefined ? input.showDonut : true,
+                charts: sortedCharts,
+            });
         });
     });
 
@@ -87,19 +90,24 @@ async function server(input) {
     });
 
     app.get('/dataset-info.json', (req, res) => {
-        let { interval } = req.query;
-        if (!interval) {
-            interval = defaultInterval;
-        }
+        const { interval, chartId } = req.query;
+        const intervalObj = intervalToMoments(interval || defaultInterval);
+        getData(intervalObj, chartId || 'default').then((data) => {
+            res.json(data);
+        });
+    });
 
-        const intervalObj = intervalToMoments(interval);
-        getData(intervalObj).then((data) => {
+    app.get('/charts.json', (req, res) => {
+        getCharts().then((data) => {
             res.json(data);
         });
     });
 
     app.get('/actor-colors.json', (req, res) => {
-        res.json(colors);
+        const { chartId } = req.query;
+        getColors(chartId).then((data) => {
+            res.json(data);
+        });
     });
 
     app.get('/intervals.json', (req, res) => {

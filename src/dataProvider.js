@@ -1,6 +1,7 @@
 const Apify = require('apify');
 const moment = require('moment');
-const { STORAGE_NAME, COLORS_KEY, INTERVALS } = require('./consts');
+const { COLORS_KEY, INTERVALS } = require('./consts');
+const { getChartStorageName } = require('./utils');
 
 const cache = {};
 
@@ -35,13 +36,17 @@ function groupDays(data) {
     return Object.values(result);
 }
 
-async function getActorData(store, actorName, interval) {
+async function getActorData(store, actorName, interval, chartId) {
     const { start, end } = interval;
 
     let data;
-    if (cache[actorName] && cache[actorName] !== null) {
+    if (!cache[chartId]) {
+        cache[chartId] = {};
+    }
+    const actorCache = cache[chartId][actorName] || {};
+    if (actorCache[actorName] && actorCache[actorName] !== null) {
         // eslint-disable-next-line prefer-destructuring
-        data = cache[actorName].data;
+        data = actorCache[actorName].data;
     }
 
     if (!data || data.length === 0) {
@@ -52,7 +57,7 @@ async function getActorData(store, actorName, interval) {
             if (d1.isSame(d2)) return 0;
             return d1.isBefore(d2) ? -1 : 1;
         });
-        cache[actorName] = { cachedAt: Date.now(), data };
+        cache[chartId][actorName] = { cachedAt: Date.now(), data };
     }
 
     if (!data) {
@@ -77,8 +82,9 @@ async function getActorData(store, actorName, interval) {
     return data;
 }
 
-async function getColors() {
-    const store = await Apify.openKeyValueStore(STORAGE_NAME);
+async function getColors(chartId) {
+    const chartStore = getChartStorageName(chartId);
+    const store = await Apify.openKeyValueStore(chartStore);
     return store.getValue(COLORS_KEY);
 }
 
@@ -96,14 +102,15 @@ async function getStoreKeys(store) {
     return result.filter((key) => key !== COLORS_KEY);
 }
 
-async function getData(interval) {
-    const store = await Apify.openKeyValueStore(STORAGE_NAME);
+async function getData(interval, chartId) {
+    const chartStore = getChartStorageName(chartId);
+    const store = await Apify.openKeyValueStore(chartStore);
     const keys = await getStoreKeys(store);
 
     let promises = [];
     let result = [];
     for (const actorName of keys) {
-        promises.push(getActorData(store, actorName, interval));
+        promises.push(getActorData(store, actorName, interval, chartId));
         if (promises.length > 10) {
             const results = await Promise.all(promises);
             promises = [];

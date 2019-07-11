@@ -1,5 +1,5 @@
 const moment = require('moment');
-const { INTERVALS } = require('./consts');
+const { INTERVALS, STORAGE_NAME } = require('./consts');
 
 function intervalToMoments(interval) {
     if (interval === INTERVALS.DAY) {
@@ -49,4 +49,19 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-module.exports = { intervalToMoments, getRandomInt };
+function normalizeName(name) {
+    return name.toLowerCase().replace(/[\s{}"?><;=+]/g, '-');
+}
+
+function getChartId(chartName) {
+    if (!chartName) return 'default';
+    return normalizeName(chartName);
+}
+
+function getChartStorageName(chartName) {
+    if (chartName === 'default') return STORAGE_NAME;
+    const normalizedName = normalizeName(chartName);
+    return `${normalizedName}-${STORAGE_NAME}`;
+}
+
+module.exports = { intervalToMoments, getRandomInt, normalizeName, getChartStorageName, getChartId };
