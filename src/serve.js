@@ -67,7 +67,8 @@ async function server(input) {
         defaultInterval = availableIntervals[0].value;
     }
 
-    const charts = Object.values(await getCharts());
+    const loadedCharts = await getCharts();
+    const charts = Object.values(loadedCharts || {});
     if (charts.length > 0) {
         for (const interval of Object.values(INTERVALS)) {
             const intervalObj = intervalToMoments(interval);
