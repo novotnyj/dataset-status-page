@@ -170,7 +170,9 @@ async function loadIntervals() {
 }
 
 const updateData = async (chartId) => {
-    window._statusPage.actorColors[chartId] = await fetchColors(chartId);
+    if (!window._statusPage.actorColors[chartId]) {
+        window._statusPage.actorColors[chartId] = await fetchColors(chartId);
+    }
 
     const url = `/dataset-info.json?interval=${window._statusPage.interval}&chartId=${chartId}`;
     const response = await fetch(url);
