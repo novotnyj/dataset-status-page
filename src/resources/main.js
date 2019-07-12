@@ -93,7 +93,6 @@ const createOrUpdateLines = (datasetData, chartId) => {
 
     const ctx = document.querySelector(`#${chartId}`);
     // eslint-disable-next-line
-    console.log(`Creating chart for ${chartId}`);
     window._statusPage.charts[chartId] = new Chart(ctx, {
         type: 'line',
         data,
@@ -196,7 +195,13 @@ const loadCharts = async () => {
 
 window._statusPage.updateData = updateData;
 
-setInterval(updateData, 5 * 60 * 1000);
+setInterval(() => {
+    window._statusPage.chartList.forEach((chart) => {
+        updateData(chart.id).then(() => {
+            console.log(`Data loaded for ${chart.name}`);
+        });
+    });
+}, 5 * 60 * 1000);
 
 function loadData() {
     if (!window._statusPage.chartList) {
