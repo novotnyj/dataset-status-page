@@ -176,7 +176,7 @@ const updateData = async (chartId) => {
     const response = await fetch(url);
 
     const data = await response.json();
-    const alerts = Array.from(document.querySelectorAll('.no-data-alert'));
+    const alerts = Array.from(document.querySelectorAll(`.${chartId} .no-data-alert`));
     if (data.length === 0) {
         alerts.forEach((el) => { el.style.display = 'block'; });
     } else {
