@@ -93,6 +93,7 @@ const createOrUpdateLines = (datasetData, chartId) => {
 
     const ctx = document.querySelector(`#${chartId}`);
     // eslint-disable-next-line
+    console.log(`Creating chart for ${chartId}`);
     window._statusPage.charts[chartId] = new Chart(ctx, {
         type: 'line',
         data,
