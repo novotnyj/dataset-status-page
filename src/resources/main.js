@@ -75,14 +75,14 @@ const runDataToDataset = (values, chartId) => {
     };
 };
 
-const charts = {};
+window._statusPage.charts = {};
 
 const createOrUpdateLines = (datasetData, chartId) => {
     const data = runDataToDataset(datasetData, chartId);
     const { interval } = window._statusPage;
 
-    if (charts[chartId]) {
-        const chart = charts[chartId];
+    if (window._statusPage.charts[chartId]) {
+        const chart = window._statusPage.charts[chartId];
         chart.data = data;
         chart.options.scales.xAxes[0].time.tooltipFormat = interval === 'day' ? 'MM.DD. HH:mm' : 'MM.DD.';
         chart.options.scales.xAxes[0].scaleLabel.labelString = interval === 'day' ? 'Time' : 'Date';
@@ -93,7 +93,7 @@ const createOrUpdateLines = (datasetData, chartId) => {
 
     const ctx = document.querySelector(`#${chartId}`);
     // eslint-disable-next-line
-    charts[chartId] = new Chart(ctx, {
+    window._statusPage.charts[chartId] = new Chart(ctx, {
         type: 'line',
         data,
         options: {
