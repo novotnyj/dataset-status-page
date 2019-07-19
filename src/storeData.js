@@ -34,13 +34,13 @@ function normalizeName(name) {
 
 async function storeData() {
     const input = await Apify.getValue('INPUT');
-    const { name, datasetId, chartName } = input;
+    const { name, datasetId, chartName, chartId } = input;
 
-    const storageName = getChartStorageName(chartName || 'default');
+    const storageName = getChartStorageName(chartName || chartId || 'default');
 
     console.log(`Opening ${storageName}`);
     const store = await Apify.openKeyValueStore(storageName);
-    await saveChart(chartName);
+    await saveChart(chartName || chartId);
 
     console.log('Getting color');
     let colors = await store.getValue(COLORS_KEY);
@@ -62,6 +62,7 @@ async function storeData() {
     const dataItem = {
         id: info.id,
         chartName: chartName || 'default',
+        chartId: chartId || 'default',
         actorName: name,
         itemCount: info.itemCount,
         actRunId: info.actRunId,
