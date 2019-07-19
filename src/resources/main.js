@@ -259,7 +259,7 @@ const loadCharts = async () => {
     const url = '/charts.json';
     const response = await fetch(url);
 
-    window._statusPage.chartList = Object.values(await response.json());
+    window._statusPage.chartList = await response.json();
 };
 
 window._statusPage.updateData = updateData;

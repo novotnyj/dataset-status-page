@@ -105,7 +105,7 @@ async function server(input) {
             res.json(input.charts);
         } else {
             getCharts().then((data) => {
-                res.json(data);
+                res.json(Object.values(data));
             });
         }
     });
