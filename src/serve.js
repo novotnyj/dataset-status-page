@@ -79,13 +79,21 @@ async function server(input) {
     }
 
     app.get('/', (req, res) => {
-        getCharts().then((data) => {
-            const sortedCharts = Object.values(data).sort((a, b) => a.id > b.id);
+        if (input.charts) {
+            const sortedCharts = input.charts.sort((a, b) => a.name > b.name);
             res.render('home', {
                 showDonut: input.showDonut !== undefined ? input.showDonut : true,
                 charts: sortedCharts,
             });
-        });
+        } else {
+            getCharts().then((data) => {
+                const sortedCharts = Object.values(data).sort((a, b) => a.id > b.id);
+                res.render('home', {
+                    showDonut: input.showDonut !== undefined ? input.showDonut : true,
+                    charts: sortedCharts,
+                });
+            });
+        }
     });
 
     app.get('/main.js', (req, res) => {
