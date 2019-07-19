@@ -226,7 +226,7 @@ async function updateTable(data, chart) {
         body += '<tr>';
         body += `<td>${name}</td>`;
         dates.forEach((date) => {
-            const value = countByDate[date] || '-';
+            const value = countByDate[date] === undefined ? '-' : countByDate[date];
             body += `<td>${value}</td>`;
         });
         body += '</tr>';
