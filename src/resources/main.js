@@ -216,7 +216,7 @@ async function updateTable(data, chart) {
         actorData.forEach((item) => {
             const { createdAt, cleanItemCount } = item;
             const formattedDate = dateFormatFunction(createdAt);
-            if (!countByDate[formattedDate]) {
+            if (countByDate[formattedDate] === undefined) {
                 countByDate[formattedDate] = cleanItemCount;
             } else {
                 countByDate[formattedDate] += cleanItemCount;
