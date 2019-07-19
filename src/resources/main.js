@@ -77,7 +77,7 @@ const runDataToDataset = (values, chartId) => {
 
 window._statusPage.charts = {};
 
-const createOrUpdateLines = (datasetData, chartId) => {
+const createOrUpdateLines = async (datasetData, chartId) => {
     const data = runDataToDataset(datasetData, chartId);
     const { interval } = window._statusPage;
 
@@ -192,7 +192,7 @@ async function updateTable(data, chart) {
         }
         return dateMomment.format('DD.MM.YYYY');
     };
-    data.forEach((item) => datesSet.add(item.createdAt));
+    data.forEach((item) => datesSet.add(dateFormatFunction(item.createdAt)));
     const dates = [...datesSet].sort((a, b) => a > b);
 
     const actorNames = [...new Set(data.map((item) => item.actorName))].sort((a, b) => a > b);
@@ -251,8 +251,10 @@ const updateData = async (chart) => {
         alerts.forEach((el) => { el.style.display = 'none'; });
     }
 
-    createOrUpdateLines(data, chartId);
-    updateTable(data, chart);
+    await Promise.all([
+        createOrUpdateLines(data, chartId),
+        updateTable(data, chart),
+    ]);
 };
 
 const loadCharts = async () => {
