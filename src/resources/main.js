@@ -169,7 +169,73 @@ async function loadIntervals() {
     });
 }
 
-const updateData = async (chartId) => {
+async function updateTable(data, chart) {
+    if (!chart.showTable) {
+        return;
+    }
+
+    const { interval } = window._statusPage;
+    const dataWithDate = data.map((item) => {
+        item.createdAt = Date.parse(item.createdAt);
+        return item;
+    });
+
+    const table = document.querySelector(`#table-${chart.id}`);
+    const tableHead = table.querySelector('thead');
+    const tableBody = table.querySelector('tbody');
+
+    const datesSet = new Set();
+    const dateFormatFunction = (date) => {
+        const dateMomment = moment(date);
+        if (interval === 'day') {
+            return dateMomment.format('DD.MM.YYYY HH:mm');
+        }
+        return dateMomment.format('DD.MM.YYYY');
+    };
+    data.forEach((item) => datesSet.add(item.createdAt));
+    const dates = [...datesSet].sort((a, b) => a > b);
+
+    const actorNames = [...new Set(data.map((item) => item.actorName))].sort((a, b) => a > b);
+
+    let head = '<tr><th>Name</th>';
+    dates.forEach((date) => { head += `<th>${date}</th>`; });
+    head += '</tr>';
+    tableHead.innerHTML = head;
+
+    const dataByActor = {};
+    dataWithDate.forEach((item) => {
+        const { actorName } = item;
+        if (!dataByActor[actorName]) dataByActor[actorName] = [];
+        dataByActor[actorName].push(item);
+    });
+
+    let body = '';
+    actorNames.forEach((name) => {
+        const actorData = dataByActor[name];
+        const countByDate = {};
+        actorData.forEach((item) => {
+            const { createdAt, cleanItemCount } = item;
+            const formattedDate = dateFormatFunction(createdAt);
+            if (!countByDate[formattedDate]) {
+                countByDate[formattedDate] = cleanItemCount;
+            } else {
+                countByDate[formattedDate] += cleanItemCount;
+            }
+        });
+
+        body += '<tr>';
+        body += `<td>${name}</td>`;
+        dates.forEach((date) => {
+            const value = countByDate[date] || '-';
+            body += `<td>${value}</td>`;
+        });
+        body += '</tr>';
+    });
+    tableBody.innerHTML = body;
+}
+
+const updateData = async (chart) => {
+    const chartId = chart.id;
     if (!window._statusPage.actorColors[chartId]) {
         window._statusPage.actorColors[chartId] = await fetchColors(chartId);
     }
@@ -186,6 +252,7 @@ const updateData = async (chartId) => {
     }
 
     createOrUpdateLines(data, chartId);
+    updateTable(data, chart);
 };
 
 const loadCharts = async () => {
@@ -199,7 +266,7 @@ window._statusPage.updateData = updateData;
 
 setInterval(() => {
     window._statusPage.chartList.forEach((chart) => {
-        updateData(chart.id).then(() => {
+        updateData(chart).then(() => {
             console.log(`Data loaded for ${chart.name}`);
         });
     });
@@ -214,7 +281,7 @@ function loadData() {
     }
 
     window._statusPage.chartList.forEach((chart) => {
-        updateData(chart.id).then(() => {
+        updateData(chart).then(() => {
             console.log(`Data loaded for ${chart.name}`);
         });
     });

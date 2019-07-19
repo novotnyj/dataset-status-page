@@ -68,7 +68,7 @@ async function server(input) {
     }
 
     const loadedCharts = await getCharts();
-    const charts = Object.values(loadedCharts || {});
+    const charts = input.charts || Object.values(loadedCharts || {});
     if (charts.length > 0) {
         for (const interval of Object.values(INTERVALS)) {
             const intervalObj = intervalToMoments(interval);
@@ -101,9 +101,13 @@ async function server(input) {
     });
 
     app.get('/charts.json', (req, res) => {
-        getCharts().then((data) => {
-            res.json(data);
-        });
+        if (input.charts) {
+            res.json(input.charts);
+        } else {
+            getCharts().then((data) => {
+                res.json(data);
+            });
+        }
     });
 
     app.get('/actor-colors.json', (req, res) => {

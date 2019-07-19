@@ -11,17 +11,22 @@
 
 <div class="container pt-4">
     {{#each charts}}
-    <div class="container {{this.id}}">
-        <div class="row">
-            <div class="col-12">
-                <h4>{{this.name}}</h4>
+        <div class="container {{this.id}}">
+            <div class="row">
+                <div class="col-12">
+                    <h4>{{this.name}}</h4>
+                </div>
+                <div class="col-12 no-data-alert">
+                    <div class="alert alert-secondary">No data yet...</div>
+                </div>
+                <canvas id="{{this.id}}"></canvas>
             </div>
-            <div class="col-12 no-data-alert">
-                <div class="alert alert-secondary">No data yet...</div>
-            </div>
-            <canvas id="{{this.id}}"></canvas>
+            {{#if this.showTable}}
+                <table id="{{`table-${this.id}`}}" class="table table-striped">
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+            {{/if}}
         </div>
-
-    </div>
     {{/each}}
 </div>
