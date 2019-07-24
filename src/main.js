@@ -3,9 +3,21 @@ const { serve } = require('./serve');
 const { storeData } = require('./storeData');
 const { ACTIONS } = require('./consts');
 
+const { client } = Apify;
+const { acts } = client;
+
+async function getActor(actId) {
+    return acts.getAct({ actId });
+}
+
 Apify.getValue('INPUT')
     .then((input) => {
         let { task } = input;
+        const { eventType, resource } = input;
+        if (eventType && eventType === 'ACTOR.RUN.SUCCEEDED') {
+            task = ACTIONS.STORE;
+        }
+
         if (!task) {
             task = ACTIONS.STORE;
         }
@@ -19,8 +31,15 @@ Apify.getValue('INPUT')
                 .catch((e) => { throw e; });
         } else {
             Apify.main(async () => {
+                if (resource) {
+                    const { actId, defaultDatasetId } = resource;
+                    const actor = await getActor(actId);
+                    input.name = actor.name;
+                    input.datasetId = defaultDatasetId;
+                }
+
                 if (task === ACTIONS.STORE) {
-                    await storeData();
+                    await storeData(input);
                 }
 
                 console.log('Done.');

@@ -32,8 +32,7 @@ function normalizeName(name) {
     return name.replace(/[\s{}"?><;=+]/g, '-');
 }
 
-async function storeData() {
-    const input = await Apify.getValue('INPUT');
+async function storeData(input) {
     const { name, datasetId, chartName, chartId } = input;
 
     const storageName = getChartStorageName(chartName || chartId || 'default');
