@@ -55,7 +55,15 @@ async function storeData(input) {
 
     console.log(`Will open dataset ${datasetId}`);
     const dataset = await Apify.openDataset(datasetId);
-    const info = await dataset.getInfo();
+    let info;
+    for (let i = 0; i < 3; i++) {
+        info = await dataset.getInfo();
+        const { createdAt, modifiedAt } = info;
+        if (createdAt !== modifiedAt) {
+            break;
+        }
+        await Apify.utils.sleep((2 ** (i + 1)) * 300);
+    }
     console.log(info);
 
     const dataItem = {
