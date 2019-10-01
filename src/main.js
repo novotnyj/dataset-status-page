@@ -34,7 +34,7 @@ Apify.getValue('INPUT')
                 if (resource) {
                     const { actId, defaultDatasetId } = resource;
                     const actor = await getActor(actId);
-                    input.name = input.siteName || actor.name;
+                    input.name = input.name || input.siteName || actor.name;
                     input.datasetId = defaultDatasetId;
                 }
 

@@ -264,8 +264,6 @@ const loadCharts = async () => {
     window._statusPage.chartList = await response.json();
 };
 
-window._statusPage.updateData = updateData;
-
 setInterval(() => {
     window._statusPage.chartList.forEach((chart) => {
         updateData(chart).then(() => {
@@ -288,6 +286,8 @@ function loadData() {
         });
     });
 }
+
+window._statusPage.updateData = loadData;
 
 loadIntervals()
     .then(() => {

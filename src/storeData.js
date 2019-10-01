@@ -1,6 +1,6 @@
 const Apify = require('apify');
 const moment = require('moment');
-const { COLORS_KEY } = require('./consts');
+const { COLORS_KEY, HEX_COLOR_REGEX } = require('./consts');
 const { getRandomColor } = require('./colors');
 const { getChartStorageName } = require('./utils');
 const { saveChart } = require('./charts');
@@ -34,6 +34,7 @@ function normalizeName(name) {
 
 async function storeData(input) {
     const { name, datasetId, chartName, chartId } = input;
+    const color = input.color && HEX_COLOR_REGEX.test(input.color) ? input.color : null;
 
     const storageName = getChartStorageName(chartName || chartId || 'default');
 
@@ -48,8 +49,12 @@ async function storeData(input) {
     }
 
     const normalizedName = normalizeName(name);
+    if (colors[normalizedName] && color && colors[normalizedName] !== color) {
+        colors[normalizedName] = color;
+        await  store.setValue(COLORS_KEY, colors);
+    }
     if (!colors[normalizedName]) {
-        colors[normalizedName] = generateActorColor(colors);
+        colors[normalizedName] = color || generateActorColor(colors);
         await store.setValue(COLORS_KEY, colors);
     }
 

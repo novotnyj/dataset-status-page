@@ -1,0 +1,84 @@
+{
+    "title": "Status dashboard",
+    "type": "object",
+    "schemaVersion": 1,
+    "required": ["task"],
+    "properties": {
+        "task": {
+            "title": "Task",
+            "description": "Type of task",
+            "type": "string",
+            "editor": "hidden",
+            "enum": ["serve", "store"],
+            "enumTitles": ["Start server", "Store data"],
+            "default": "serve"
+        },
+        "charts": {
+            "title": "Charts",
+            "description": "actorId - ID of actor, minDatasetItems - consider run with less items in dataset as failed, maxRunTimeSecs - consider actor runnning longer than this as failed",
+            "prefill": [{ "chartId": "XXX", "name": "My chart", "showTable": false }],
+            "example": [{ "chartId": "my-super-chart-1", "name": "My chart", "showTable": false }],
+            "type": "array",
+            "editor": "json",
+            "nullable": true
+        },
+        "rebrandly": {
+            "title": "Rebrandly config",
+            "description": "Rebrandly connection configuration",
+            "type": "json",
+            "editor": "json",
+            "prefill": {
+                "id": "LinkId",
+                "apiKey": "YourApiKey",
+                "workspace": "YourWorkspaceId",
+                "title": "My cool dashboard"
+            },
+            "example": {
+                "id": "LinkId",
+                "apiKey": "YourApiKey",
+                "workspace": "YourWorkspaceId",
+                "title": "My cool dashboard"
+            },
+            "nullable": true
+        },
+        "intervals": {
+            "title": "Intervals",
+            "description": "List of intervals that should be displayed on status page",
+            "type": "array",
+            "editor": "stringList",
+            "uniqueItems": true,
+            "minItems": 1,
+            "nullable": false,
+            "example": [ "day", "week", "two-weeks", "month", "two-months" ],
+            "prefill": [ "day", "week", "two-weeks", "month", "two-months" ]
+        },
+        "datasetId": {
+            "title": "Dataset id",
+            "description": "Id of dataset to store",
+            "type": "string",
+            "editor": "hidden",
+            "nullable": true
+        },
+        "name": {
+            "title": "Name of the site, actor or task",
+            "description": "Displayed name of site, actor or task",
+            "type": "string",
+            "editor": "hidden",
+            "nullable": true
+        },
+        "color": {
+            "title": "Color",
+            "description": "Color of dataline",
+            "type": "string",
+            "editor": "hidden",
+            "nullable": true
+        },
+        "chartId": {
+            "title": "Chart Id",
+            "description": "Id of the chart to display data on",
+            "type": "string",
+            "editor": "hidden",
+            "nullable": true
+        }
+    }
+}

@@ -5,6 +5,7 @@ const env = Apify.getEnv();
 const CHARTS_STORAGE = `status-page-charts-${env.userId}-${env.actId}`;
 const STORAGE_NAME = `status-page-${env.userId}-${env.actId}`;
 const COLORS_KEY = 'actor-colors';
+const HEX_COLOR_REGEX = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
 
 const ACTIONS = {
     SERVE: 'serve',
@@ -43,4 +44,4 @@ const INTERVALS_WITH_LABELS = [
     },
 ];
 
-module.exports = { STORAGE_NAME, COLORS_KEY, ACTIONS, INTERVALS, INTERVALS_WITH_LABELS, CHARTS_STORAGE };
+module.exports = { STORAGE_NAME, COLORS_KEY, ACTIONS, INTERVALS, INTERVALS_WITH_LABELS, CHARTS_STORAGE, HEX_COLOR_REGEX };
