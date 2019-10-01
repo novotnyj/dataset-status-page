@@ -34,7 +34,7 @@ Copy this url to your browser and get ready to be amazed 😎🍿
 ## Storing data
 
 You can use a webhooks to store dataset statistics to the dashboard or call it using `Apify.call` from your actor.
-Use following input for storing a dataset info:
+Use following input for storing a dataset info manually:
 
 ```
 {
@@ -54,8 +54,11 @@ Use following input for storing a dataset info:
 ### Using webhooks to store data
 
 You can use webhooks for storing a data. Just create a webhook under your actor or task for `Run succeeded` event.
-Set the url to start dashboard task. You can add a custom name to the payload template as `"name": "hackernews.com"`.
-If there is no name set, then dashboard will lookup actor name and use that as a name for data line.
+Set the url to start dashboard task. Actor will open default dataset of finished run and collect its statistics.
+
+You can add a custom name to the payload template as `"name": "hackernews.com"`.
+If there is no name set, then dashboard will lookup actor name and use that as a name for data line. 
+Same with `color` or `chartId` attributes.  
 
 ## Persistent url
 
