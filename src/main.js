@@ -12,10 +12,14 @@ async function getActor(actId) {
 
 Apify.getValue('INPUT')
     .then((input) => {
-        let { task } = input;
+        let { task, charts, rebrandly, intervals } = input;
         const { eventType, resource } = input;
         if (eventType && eventType === 'ACTOR.RUN.SUCCEEDED') {
             task = ACTIONS.STORE;
+        }
+
+        if (!task && (charts || rebrandly || intervals)) {
+            task = ACTIONS.SERVE;
         }
 
         if (!task) {

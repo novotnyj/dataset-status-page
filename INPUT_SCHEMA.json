@@ -49,34 +49,6 @@
             "nullable": false,
             "example": [ "day", "week", "two-weeks", "month", "two-months" ],
             "prefill": [ "day", "week", "two-weeks", "month", "two-months" ]
-        },
-        "datasetId": {
-            "title": "Dataset id",
-            "description": "Id of dataset to store",
-            "type": "string",
-            "editor": "hidden",
-            "nullable": true
-        },
-        "name": {
-            "title": "Name of the site, actor or task",
-            "description": "Displayed name of site, actor or task",
-            "type": "string",
-            "editor": "hidden",
-            "nullable": true
-        },
-        "color": {
-            "title": "Color",
-            "description": "Color of dataline",
-            "type": "string",
-            "editor": "hidden",
-            "nullable": true
-        },
-        "chartId": {
-            "title": "Chart Id",
-            "description": "Id of the chart to display data on",
-            "type": "string",
-            "editor": "hidden",
-            "nullable": true
         }
     }
 }
