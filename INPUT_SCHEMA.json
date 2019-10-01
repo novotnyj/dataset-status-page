@@ -23,7 +23,7 @@
         "rebrandly": {
             "title": "Rebrandly config",
             "description": "Rebrandly connection configuration",
-            "type": "json",
+            "type": "object",
             "editor": "json",
             "prefill": {
                 "id": "LinkId",
