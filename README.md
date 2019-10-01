@@ -51,6 +51,12 @@ Use following input for storing a dataset info:
 - chartId - string - an id of a chart
 - color - optional string - what color (in hex format) should be used to display data. If not set some color will be picked randomly.
 
+### Using webhooks to store data
+
+You can use webhooks for storing a data. Just create a webhook under your actor or task for `Run succeeded` event.
+Set the url to start dashboard task. You can add a custom name to the payload template as `"name": "hackernews.com"`.
+If there is no name set, then dashboard will lookup actor name and use that as a name for data line.
+
 ## Persistent url
 
 Every actor starts with public URL which is different for every run. 
@@ -68,9 +74,3 @@ Actor is prepared to update your rebrand.ly with every start. Just add this to t
      ...
  }
 ```
-
-## Webhooks
-
-You can use webhooks for storing a data. Just create a webhook under your actor or task for `Run succeeded` event.
-Set the url to start dashboard task. You can add a custom name to the payload template as `"name": "hackernews.com"`.
-If there is no name set, then dashboard will lookup actor name and use that as a name for data line.
