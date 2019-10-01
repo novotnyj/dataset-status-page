@@ -9,8 +9,6 @@
             "description": "Type of task",
             "type": "string",
             "editor": "hidden",
-            "enum": ["serve", "store"],
-            "enumTitles": ["Start server", "Store data"],
             "default": "serve"
         },
         "charts": {

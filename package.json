@@ -4,7 +4,7 @@
 	"description": "This is a boilerplate of an Apify actor.",
 	"main": "./src/main.js",
 	"dependencies": {
-		"apify": "^0.14.0",
+		"apify": "^0.15.0",
 		"express": "^4.16.4",
 		"express-handlebars": "^3.1.0",
 		"material-colors": "^1.2.6",
