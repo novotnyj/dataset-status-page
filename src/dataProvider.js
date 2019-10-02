@@ -51,6 +51,7 @@ async function getActorData(store, actorName, interval, chartId) {
 
     if (!data || data.length === 0) {
         data = await store.getValue(actorName);
+        if (!data) return [];
         data = data.sort((a, b) => {
             const d1 = moment(a.createdAt);
             const d2 = moment(b.createdAt);
