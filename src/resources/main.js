@@ -192,8 +192,9 @@ async function updateTable(data, chart) {
         }
         return dateMomment.format('DD.MM.YYYY');
     };
-    data.forEach((item) => datesSet.add(dateFormatFunction(item.createdAt)));
-    const dates = [...datesSet].sort((a, b) => a > b);
+    data.sort((a, b) => a.createdAt > b.createdAt)
+        .forEach((item) => datesSet.add(dateFormatFunction(item.createdAt)));
+    const dates = [...datesSet];
 
     const actorNames = [...new Set(data.map((item) => item.actorName))].sort((a, b) => a > b);
 
