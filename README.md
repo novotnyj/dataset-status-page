@@ -23,7 +23,7 @@ Use following input for starting a status page server:
 - `charts` - array of charts that should be displayed on the dashboard
     - `id` - string - an unique id of this chart. Will be used to store data. 
     - `name` - string - name of chart that will be displayed on the dashboard
-    - `showTable` - if `true` then there will be a table under the chart with the name of actor and daily dataset size
+    - `showTable` - `false` by default. If `true` then there will be a table under the chart with the name of actor and daily dataset size
 
 You will see following line in actor log:
 
