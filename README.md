@@ -1,6 +1,6 @@
 ## Start a webserver with the status page
 
-![Screenshot](doc/dashboard.png)
+![Screenshot](https://github.com/novotnyj/dataset-status-page/blob/master/doc/dashboard.png?raw=true)
 
 Use following input for starting a status page server:
 
