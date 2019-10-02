@@ -1,5 +1,7 @@
 ## Start a webserver with the status page
 
+![Screenshot](doc/dashboard.png)
+
 Use following input for starting a status page server:
 
 ```
