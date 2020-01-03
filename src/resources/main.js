@@ -209,7 +209,7 @@ async function updateTable(data, chart) {
     const actorNames = [...new Set(data.map((item) => item.actorName))].sort((a, b) => a > b);
 
     let head = '<tr><th>Name</th>';
-    Object.keys(datesTable).forEach((date) => { head += `<th>${date}</th>`; });
+    dates.forEach((date) => { head += `<th>${dateFormatFunction(date)}</th>`; });
     head += '</tr>';
     tableHead.innerHTML = head;
 
