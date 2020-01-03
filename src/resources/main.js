@@ -192,14 +192,17 @@ async function updateTable(data, chart) {
         }
         return dateMomment.format('DD.MM.YYYY');
     };
-    data.sort((a, b) => a.createdAt > b.createdAt)
-        .forEach((item) => datesSet.add(dateFormatFunction(item.createdAt)));
-    const dates = [...datesSet];
+    const datesTable = {};
+    data.forEach((item) => {
+        const formatted = dateFormatFunction(item.createdAt);
+        if (!datesTable[formatted]) datesTable[formatted] = item.createdAt;
+    });
+    const dates = Object.values(datesTable).sort((a, b) => a > b);
 
     const actorNames = [...new Set(data.map((item) => item.actorName))].sort((a, b) => a > b);
 
     let head = '<tr><th>Name</th>';
-    dates.forEach((date) => { head += `<th>${date}</th>`; });
+    Object.keys(datesTable).forEach((date) => { head += `<th>${date}</th>`; });
     head += '</tr>';
     tableHead.innerHTML = head;
 
@@ -227,7 +230,8 @@ async function updateTable(data, chart) {
         body += '<tr>';
         body += `<td>${name}</td>`;
         dates.forEach((date) => {
-            const value = countByDate[date] === undefined ? '-' : countByDate[date];
+            const formattedDate = dateFormatFunction(date);
+            const value = countByDate[formattedDate] === undefined ? '-' : countByDate[formattedDate];
             body += `<td>${value}</td>`;
         });
         body += '</tr>';
