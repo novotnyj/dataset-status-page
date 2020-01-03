@@ -14,8 +14,8 @@
         "charts": {
             "title": "Charts",
             "description": "actorId - ID of actor, minDatasetItems - consider run with less items in dataset as failed, maxRunTimeSecs - consider actor runnning longer than this as failed",
-            "prefill": [{ "chartId": "XXX", "name": "My chart", "showTable": false }],
-            "example": [{ "chartId": "my-super-chart-1", "name": "My chart", "showTable": false }],
+            "prefill": [{ "id": "my-super-chart-1", "name": "My chart", "showTable": false }],
+            "example": [{ "id": "my-super-chart-1", "name": "My chart", "showTable": false }],
             "type": "array",
             "editor": "json",
             "nullable": true

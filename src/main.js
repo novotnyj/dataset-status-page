@@ -25,6 +25,9 @@ Apify.getValue('INPUT')
         if (!task) {
             task = ACTIONS.STORE;
         }
+        if (input.name && input.datasetId) {
+            task = ACTIONS.STORE;
+        }
 
         if (!Object.values(ACTIONS).some((action) => action === task)) {
             throw new Error(`Task has to be one of: ${Object.values(ACTIONS).join(', ')}, ${task} given`);
