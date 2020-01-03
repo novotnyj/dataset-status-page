@@ -204,9 +204,9 @@ async function updateTable(data, chart) {
         const formatted = dateFormatFunction(item.createdAt);
         if (!datesTable[formatted]) datesTable[formatted] = moment(item.createdAt);
     });
-    const dates = Object.values(datesTable).sort((a, b) => a.isAfter(b));
+    const dates = Object.values(datesTable).sort((a, b) => a.isAfter(b) ? 1 : -1);
 
-    const actorNames = [...new Set(data.map((item) => item.actorName))].sort((a, b) => a > b);
+    const actorNames = [...new Set(data.map((item) => item.actorName))].sort((a, b) => a > b ? 1 : -1);
 
     let head = '<tr><th>Name</th>';
     dates.forEach((date) => { head += `<th>${dateFormatFunction(date)}</th>`; });
