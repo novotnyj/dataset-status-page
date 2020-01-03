@@ -169,6 +169,12 @@ async function loadIntervals() {
     });
 }
 
+/**
+ *
+ * @param {[Object]} data
+ * @param {Object} chart
+ * @return {Promise<void>}
+ */
 async function updateTable(data, chart) {
     if (!chart.showTable) {
         return;
@@ -184,7 +190,6 @@ async function updateTable(data, chart) {
     const tableHead = table.querySelector('thead');
     const tableBody = table.querySelector('tbody');
 
-    const datesSet = new Set();
     const dateFormatFunction = (date) => {
         const dateMomment = moment(date);
         if (interval === 'day') {
@@ -193,11 +198,13 @@ async function updateTable(data, chart) {
         return dateMomment.format('DD.MM.YYYY');
     };
     const datesTable = {};
+    window._statusPage.chartData = window._statusPage.chartData || {};
+    window._statusPage.chartData[chart.id] = data;
     data.forEach((item) => {
         const formatted = dateFormatFunction(item.createdAt);
-        if (!datesTable[formatted]) datesTable[formatted] = item.createdAt;
+        if (!datesTable[formatted]) datesTable[formatted] = moment(item.createdAt);
     });
-    const dates = Object.values(datesTable).sort((a, b) => a > b);
+    const dates = Object.values(datesTable).sort((a, b) => a.isAfter(b));
 
     const actorNames = [...new Set(data.map((item) => item.actorName))].sort((a, b) => a > b);
 
