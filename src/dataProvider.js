@@ -107,7 +107,7 @@ async function getStoreKeys(store) {
 
 async function getData(interval, chartId) {
     const chartStore = getChartStorageName(chartId);
-    log.info('Opening chart store', { chartStore });
+    log.debug('Opening chart store', { chartStore });
     const store = await Apify.openKeyValueStore(chartStore);
     const keys = await getStoreKeys(store);
 
