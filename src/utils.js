@@ -1,4 +1,5 @@
 const moment = require('moment');
+const md5 = require('md5');
 const { INTERVALS, STORAGE_NAME } = require('./consts');
 
 function intervalToMoments(interval) {
@@ -61,7 +62,16 @@ function getChartId(chartName) {
 function getChartStorageName(chartName) {
     if (chartName === 'default') return STORAGE_NAME;
     const normalizedName = normalizeName(chartName);
-    return `${normalizedName}-${STORAGE_NAME}`;
+    const result = `${normalizedName}-${STORAGE_NAME}`;
+    if (result.length >= 63) {
+        const nameHash = md5(normalizedName);
+        const remainingLength = 63 - `-${STORAGE_NAME}`.length;
+        return nameHash.length > remainingLength
+            ? `${nameHash.substr(0, remainingLength-1)}-${STORAGE_NAME}`
+            : `${nameHash}-${STORAGE_NAME}`;
+    }
+
+    return result;
 }
 
 module.exports = { intervalToMoments, getRandomInt, normalizeName, getChartStorageName, getChartId };
