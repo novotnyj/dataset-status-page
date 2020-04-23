@@ -3,6 +3,8 @@ const moment = require('moment');
 const { COLORS_KEY, INTERVALS } = require('./consts');
 const { getChartStorageName } = require('./utils');
 
+const { log } = Apify.utils;
+
 const cache = {};
 
 async function cacheCleaner() {
@@ -105,6 +107,7 @@ async function getStoreKeys(store) {
 
 async function getData(interval, chartId) {
     const chartStore = getChartStorageName(chartId);
+    log.info('Opening chart store', { chartStore });
     const store = await Apify.openKeyValueStore(chartStore);
     const keys = await getStoreKeys(store);
 
