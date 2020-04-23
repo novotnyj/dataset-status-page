@@ -5,6 +5,7 @@ const { ACTIONS } = require('./consts');
 
 const { client } = Apify;
 const { acts } = client;
+const { log } = Apify.utils;
 
 async function getActor(actId) {
     return acts.getAct({ actId });
@@ -52,4 +53,5 @@ Apify.getValue('INPUT')
                 console.log('Done.');
             });
         }
-    });
+    })
+    .catch(e => log.error('Error in main function', e));
