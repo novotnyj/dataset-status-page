@@ -1,7 +1,6 @@
 const Apify = require('apify');
 const express = require('express');
 const exphbs = require('express-handlebars');
-const rp = require('request-promise');
 const { INTERVALS, INTERVALS_WITH_LABELS } = require('./consts');
 const { intervalToMoments } = require('./utils');
 const { getData, getColors } = require('./dataProvider');
@@ -31,8 +30,8 @@ async function updateRebrandly(input) {
     };
 
     log.info('Updating rebrand.ly', { data });
-    await rp({
-        uri: `https://api.rebrandly.com/v1/links/${id}`,
+    await Apify.utils.requestAsBrowser({
+        url: `https://api.rebrandly.com/v1/links/${id}`,
         method: 'POST',
         body: JSON.stringify(data),
         headers: requestHeaders,
