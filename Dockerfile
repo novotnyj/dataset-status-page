@@ -1,4 +1,4 @@
-FROM apify/actor-node-basic
+FROM apify/actor-node-basic:v0.21.9
 
 # Copy source code
 COPY . ./
